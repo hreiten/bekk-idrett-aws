@@ -9,6 +9,8 @@ jobs:
   terraform:
     name: "Terraform validate"
     runs-on: ubuntu-latest
+    env:
+      PROD_PATH: terraform/prod
 
     steps:
       - name: Checkout
@@ -28,10 +30,15 @@ jobs:
 
       - name: Terraform init
         run: |
-          cd terraform/prod
+          cd ${{ env.PROD_PATH }}
           terraform init
 
       - name: Terraform validate
         run: |
-          cd terraform/prod
+          cd ${{ env.PROD_PATH }}
+          terraform validate
+
+      - name: Terraform apply
+        run: |
+          cd ${{ env.PROD_PATH }}
           terraform validate
