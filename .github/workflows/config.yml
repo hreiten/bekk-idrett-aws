@@ -41,4 +41,4 @@ jobs:
       - name: Terraform apply
         run: |
           cd ${{ env.PROD_PATH }}
-          terraform validate
+          terraform apply --auto-approve
