@@ -8,16 +8,11 @@ on:
 
 jobs:
   validate-terraform:
-    name: Validate terraform
+    name: Validate terraforms
     runs-on: ubuntu-latest
-    docker:
-      - image: hashicorp/terraform:0.12.28
-    working_directory: /tmp/workspace
     steps:
-      - checkout:
-          path: ~/repo
-      - name: Validate terraform code
-        command: |
-          printf "Validating terraform code\n"
-          cd ~/repo/terraform
-          (cd prod && terraform init -backend=false && terraform validate)
+      - uses: actions/checkout@v2
+      - name: Run a Terraform init
+        uses: docker://hashicorp/terraform:0.12.28
+        run: |
+          ls
