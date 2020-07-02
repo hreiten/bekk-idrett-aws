@@ -20,7 +20,7 @@ jobs:
 
       - name: Terraform init
         run: |
-          ls -R
+          cd terraform/prod
           terraform init
 
       - name: Terraform format check
