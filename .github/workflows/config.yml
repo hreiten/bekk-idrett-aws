@@ -1,4 +1,4 @@
-name: Build, zip and upload source
+name: "Terraform"
 
 on:
   push:
@@ -6,16 +6,17 @@ on:
       - "cicd"
 
 jobs:
-  validate-terraform:
-    name: Run terraform init
+  terraform:
+    name: "Terraform"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: ls
-        run: >-
-          ls
-      - name: Run a Terraform init
-        uses: docker://hashicorp/terraform:0.12.28
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
         with:
-          entrypoint: terraform
-          args: init
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+      - name: Terraform Format
+        run: terraform fmt -check
