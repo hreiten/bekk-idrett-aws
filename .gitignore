@@ -1,0 +1,29 @@
+# Terraform
+**/.terraform
+**/*.tfstate*
+crash.log
+
+# InteliJ IDE
+.idea/
+
+# Lambda Zips
+lambda/*/*.zip
+
+# Python virtualenvs
+**/.env/
+
+# IDE folders
+.vim/
+
+# build files
+*.iml
+out/
+.gradle/
+build/
+target/
+config_override/
+
+# dynamically generated config file
+terraform/service/activities.json
+
+Logforwarding.zip
