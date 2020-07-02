@@ -8,5 +8,5 @@
 LIST=$( git diff --name-only --cached --diff-filter=ACM -- *.{yml,yaml} )
 
 if [ -n "$LIST" ]; then
-		node_modules/yaml-lint/cli.js $LIST
+		yamllint $LIST
 fi
