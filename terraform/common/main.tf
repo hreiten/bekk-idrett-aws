@@ -5,13 +5,11 @@ data "aws_region" "current" {}
 locals {
   project_bucket = "${var.name_prefix}-${var.env}-pipeline-artifact"
 
-  current_account_id = data.aws_caller_identity.current-account.account_id
-  current_region     = data.aws_region.current.name
-
   availability_zones = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
-  name               = "api"
   vpc_cidr_block     = "10.0.0.0/16"
   service_port       = 8080
+
+  api_name = "api"
 }
 
 ## CREATE VPC AND SUBNETS
@@ -19,7 +17,7 @@ module "vpc" {
   source     = "github.com/cloudposse/terraform-aws-vpc.git?ref=b2df4eb"
   namespace  = var.name_prefix
   stage      = var.env
-  name       = local.name
+  name       = local.api_name
   cidr_block = local.vpc_cidr_block
   tags       = var.tags
 }
@@ -28,7 +26,7 @@ module "dynamic_subnets" {
   source             = "github.com/cloudposse/terraform-aws-dynamic-subnets.git?ref=7d3182d"
   namespace          = var.name_prefix
   stage              = var.env
-  name               = local.name
+  name               = local.api_name
   availability_zones = local.availability_zones
   vpc_id             = module.vpc.vpc_id
   igw_id             = module.vpc.igw_id
@@ -114,7 +112,7 @@ module "acm_request_certificate" {
 
 ## CREATE ALIAS FROM DOMAIN TO ALB
 module "production_www" {
-  source                 = "github.com/cloudposse/terraform-aws-route53-alias.git?ref=master"
+  source                 = "github.com/cloudposse/terraform-aws-route53-alias.git?ref=d13bc2d"
   aliases                = [var.env_domain_name]
   parent_zone_id         = data.aws_route53_zone.default.zone_id
   target_dns_name        = aws_lb.alb.dns_name
@@ -151,18 +149,18 @@ resource "aws_ecs_cluster" "cluster" {
 ## CREATE FARGATE SERVICE: API
 module "service" {
   source             = "./fargate_service"
-  name_prefix        = "${var.name_prefix}-api"
+  name_prefix        = "${var.name_prefix}-${local.api_name}"
   vpc_id             = module.vpc.vpc_id
   private_subnet_ids = module.dynamic_subnets.public_subnet_ids
   lb_arn             = aws_lb.alb.arn
   cluster_id         = aws_ecs_cluster.cluster.id
 
-  task_container_image = "796694622366.dkr.ecr.eu-west-1.amazonaws.com/${var.name_prefix}-api:latest"
+  task_container_image = "796694622366.dkr.ecr.eu-west-1.amazonaws.com/${var.name_prefix}-${local.api_name}:latest"
   task_container_port  = local.service_port
 
   health_check = {
     port = local.service_port
-    path = "/api/health"
+    path = "/${local.api_name}/health"
   }
 
   tags = var.tags
@@ -187,7 +185,7 @@ resource "aws_lb_listener_rule" "service_lb_listener" {
 
   condition {
     path_pattern {
-      values = ["/api/*"]
+      values = ["/${local.api_name}/*"]
     }
   }
 }
