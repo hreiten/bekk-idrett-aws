@@ -31,6 +31,7 @@ jobs:
           cd terraform/prod
           terraform init
 
-      - name: Terraform format check
+      - name: Terraform plan
         run: |
-          terraform fmt -check
+          cd terraform/prod
+          terraform plan
