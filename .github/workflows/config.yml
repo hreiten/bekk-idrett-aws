@@ -8,11 +8,15 @@ on:
 
 jobs:
   validate-terraform:
-    name: Validate terraforms
+    name: Run terraform init
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Run a Terraform init
-        uses: docker://hashicorp/terraform:0.12.28
+      - name: ls
         run: |
           ls
+      - name: Run a Terraform init
+        uses: docker://hashicorp/terraform:0.12.28
+        with:
+          entrypoint: terraform/prod
+          args: init
