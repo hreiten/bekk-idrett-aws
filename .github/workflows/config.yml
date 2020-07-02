@@ -1,5 +1,4 @@
 name: Build, zip and upload source
-version: 2.1
 
 on:
   push:
