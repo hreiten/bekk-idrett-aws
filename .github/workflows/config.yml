@@ -3,11 +3,14 @@ name: "Terraform workflow"
 on:
   push:
     branches:
-      - "cicd"
+      - "master"
+  pull_request:
+    branches:
+      - "master"
 
 jobs:
   terraform:
-    name: "Terraform validate"
+    name: "Terraform init, validate and apply"
     runs-on: ubuntu-latest
     env:
       PROD_PATH: terraform/prod
