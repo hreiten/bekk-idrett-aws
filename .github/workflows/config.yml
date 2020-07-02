@@ -8,7 +8,7 @@ on:
 
 jobs:
   validate-terraform:
-    name: Validate
+    name: Validate terraform
     runs-on: ubuntu-latest
     docker:
       - image: hashicorp/terraform:0.12.28
