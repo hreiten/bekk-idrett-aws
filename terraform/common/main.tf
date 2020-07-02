@@ -8,8 +8,7 @@ locals {
   availability_zones = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
   vpc_cidr_block     = "10.0.0.0/16"
   service_port       = 8080
-
-  api_name = "api"
+  api_name           = "api"
 }
 
 ## CREATE VPC AND SUBNETS
