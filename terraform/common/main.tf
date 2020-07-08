@@ -146,6 +146,10 @@ resource "aws_ecs_cluster" "cluster" {
 
 
 ## CREATE FARGATE SERVICE: API
+data "aws_ssm_parameter" "service_version" {
+  name = "/${var.name_prefix}/${var.name_prefix}-${local.api_name}/image-sha"
+}
+
 module "service" {
   source             = "./fargate_service"
   name_prefix        = "${var.name_prefix}-${local.api_name}"
@@ -154,7 +158,7 @@ module "service" {
   lb_arn             = aws_lb.alb.arn
   cluster_id         = aws_ecs_cluster.cluster.id
 
-  task_container_image = "796694622366.dkr.ecr.eu-west-1.amazonaws.com/${var.name_prefix}-${local.api_name}:latest"
+  task_container_image = "796694622366.dkr.ecr.eu-west-1.amazonaws.com/${var.name_prefix}-${local.api_name}:${data.aws_ssm_parameter.service_version.value}-SHA1"
   task_container_port  = local.service_port
 
   health_check = {
